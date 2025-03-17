@@ -324,7 +324,7 @@ const Checkout: React.FC = () => {
 
   const calculateTotalFees = () => {
     const processingFee = parseFloat(calculateProcessingFee());
-    const networkFee = parseFloat(calculateNetworkFee());
+    const networkFee = mode === 'buy' ? parseFloat(calculateNetworkFee()) : 0;
     return (processingFee + networkFee).toFixed(2);
   };
 
