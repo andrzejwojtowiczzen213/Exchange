@@ -23,6 +23,12 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
 
   const defaultCurrency = (navigationState?.selectedCurrency || 'USD') as 'USD' | 'EUR';
   
+  // Define rates before they are used
+  const btcRate = 84426.20;
+  const ethRate = 1940.21;
+  const solRate = 148.32;
+  const usdRate = 1.088; // EUR to USD exchange rate
+
   const [selectedAsset, setSelectedAsset] = useState(navigationState?.selectedAsset || 'BTC');
   const [assetValue, setAssetValue] = useState(() => {
     if (navigationState?.assetValue) return navigationState.assetValue;
@@ -39,11 +45,6 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
     return formatFiat('500');
   });
   const [showTokenOnTop, setShowTokenOnTop] = useState(false);
-
-  const btcRate = 84426.20;
-  const ethRate = 1940.21;
-  const solRate = 148.32;
-  const usdRate = 1.088; // EUR to USD exchange rate
 
   const getAssetRate = () => {
     let rate;
