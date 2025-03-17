@@ -802,10 +802,12 @@ const Checkout: React.FC = () => {
             <div style={feesLabelStyles}>Processing fee</div>
             <div style={feesValueStyles}>{selectedCurrency === 'EUR' ? '€' : '$'}{calculateProcessingFee()}</div>
           </div>
-          <div style={feesOptionStyles}>
-            <div style={feesLabelStyles}>Network fee</div>
-            <div style={feesValueStyles}>{selectedCurrency === 'EUR' ? '€' : '$'}{calculateNetworkFee()}</div>
-          </div>
+          {mode === 'buy' && (
+            <div style={feesOptionStyles}>
+              <div style={feesLabelStyles}>Network fee</div>
+              <div style={feesValueStyles}>{selectedCurrency === 'EUR' ? '€' : '$'}{calculateNetworkFee()}</div>
+            </div>
+          )}
           <div style={dividerStyles} />
           <div style={{
             ...feesOptionStyles,
@@ -818,7 +820,7 @@ const Checkout: React.FC = () => {
             <div style={{
               ...feesValueStyles,
               fontWeight: 600
-            }}>{selectedCurrency === 'EUR' ? '€' : '$'}{calculateTotalFees()}</div>
+            }}>{selectedCurrency === 'EUR' ? '€' : '$'}{mode === 'buy' ? calculateTotalFees() : calculateProcessingFee()}</div>
           </div>
           <button 
             onClick={() => setIsFeesDrawerOpen(false)}
