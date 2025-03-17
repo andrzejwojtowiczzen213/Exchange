@@ -18,33 +18,48 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const navigationState = location.state as LocationState | null;
-  const [fiatInputRef] = useState<React.RefObject<HTMLInputElement>>(React.createRef());
-  const [assetInputRef] = useState<React.RefObject<HTMLInputElement>>(React.createRef());
 
-  const defaultCurrency = (navigationState?.selectedCurrency || 'USD') as 'USD' | 'EUR';
-  
-  // Define rates before they are used
+  // Constants
   const btcRate = 84426.20;
   const ethRate = 1940.21;
   const solRate = 148.32;
   const usdRate = 1.088; // EUR to USD exchange rate
+  const defaultCurrency = (navigationState?.selectedCurrency || 'USD') as 'USD' | 'EUR';
 
+  // Refs
+  const [fiatInputRef] = useState<React.RefObject<HTMLInputElement>>(React.createRef());
+  const [assetInputRef] = useState<React.RefObject<HTMLInputElement>>(React.createRef());
+
+  // State declarations
   const [selectedAsset, setSelectedAsset] = useState(navigationState?.selectedAsset || 'BTC');
-  const [assetValue, setAssetValue] = useState(() => {
-    if (navigationState?.assetValue) return navigationState.assetValue;
-    const rate = btcRate;
-    return (500 / rate).toFixed(4);
-  });
+  const [selectedCurrency, setSelectedCurrency] = useState<'EUR' | 'USD'>(defaultCurrency);
   const [mode, setMode] = useState<'buy' | 'sell'>(navigationState?.mode || 'buy');
+  const [showTokenOnTop, setShowTokenOnTop] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isFeesDrawerOpen, setIsFeesDrawerOpen] = useState(false);
   const [isAssetDrawerOpen, setIsAssetDrawerOpen] = useState(false);
-  const [selectedCurrency, setSelectedCurrency] = useState<'EUR' | 'USD'>(defaultCurrency);
-  const [inputValue, setInputValue] = useState(() => {
-    if (navigationState?.fiatValue) return navigationState.fiatValue;
-    return formatFiat('500');
-  });
-  const [showTokenOnTop, setShowTokenOnTop] = useState(false);
+
+  // Helper functions
+  const formatFiat = (value: string) => {
+    const numericValue = parseFloat(value.replace(/[€$,]/g, ''));
+    if (isNaN(numericValue)) return selectedCurrency === 'EUR' ? '€0' : '$0';
+    const symbol = selectedCurrency === 'EUR' ? '€' : '$';
+    
+    const hasDecimals = value.includes('.');
+    if (!hasDecimals) {
+      return `${symbol}${numericValue.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      })}`;
+    } else {
+      const parts = value.split('.');
+      const decimalPlaces = parts.length === 2 ? Math.min(parts[1].length, 2) : 0;
+      return `${symbol}${numericValue.toLocaleString('en-US', {
+        minimumFractionDigits: decimalPlaces,
+        maximumFractionDigits: decimalPlaces,
+      })}`;
+    }
+  };
 
   const getAssetRate = () => {
     let rate;
@@ -61,7 +76,18 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
     return selectedCurrency === 'USD' ? rate * usdRate : rate;
   };
 
-  // Set default values on component mount
+  // Dependent state declarations
+  const [assetValue, setAssetValue] = useState(() => {
+    if (navigationState?.assetValue) return navigationState.assetValue;
+    const rate = btcRate;
+    return (500 / rate).toFixed(4);
+  });
+
+  const [inputValue, setInputValue] = useState(() => {
+    if (navigationState?.fiatValue) return navigationState.fiatValue;
+    return formatFiat('500');
+  });
+
   useEffect(() => {
     if (!location.state) {
       const rate = getAssetRate();
@@ -187,29 +213,6 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
       const baseValue = selectedCurrency === 'USD' ? parseFloat(numericValue) / usdRate : parseFloat(numericValue);
       const newAssetValue = (baseValue / (rate / (selectedCurrency === 'USD' ? usdRate : 1))).toFixed(4);
       setAssetValue(newAssetValue);
-    }
-  };
-
-  const formatFiat = (value: string) => {
-    const numericValue = parseFloat(value.replace(/[€$,]/g, ''));
-    if (isNaN(numericValue)) return selectedCurrency === 'EUR' ? '€0' : '$0';
-    const symbol = selectedCurrency === 'EUR' ? '€' : '$';
-    
-    // Format without decimals if it's a whole number
-    const hasDecimals = value.includes('.');
-    if (!hasDecimals) {
-      return `${symbol}${numericValue.toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      })}`;
-    } else {
-      // If there are decimals, keep them as they are (up to 2 places)
-      const parts = value.split('.');
-      const decimalPlaces = parts.length === 2 ? Math.min(parts[1].length, 2) : 0;
-      return `${symbol}${numericValue.toLocaleString('en-US', {
-        minimumFractionDigits: decimalPlaces,
-        maximumFractionDigits: decimalPlaces,
-      })}`;
     }
   };
 
