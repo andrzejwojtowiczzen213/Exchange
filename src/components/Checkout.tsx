@@ -803,15 +803,17 @@ const Checkout: React.FC = () => {
             <div style={feesValueStyles}>{selectedCurrency === 'EUR' ? '€' : '$'}{calculateProcessingFee()}</div>
           </div>
           {mode === 'buy' && (
-            <div style={feesOptionStyles}>
-              <div style={feesLabelStyles}>Network fee</div>
-              <div style={feesValueStyles}>{selectedCurrency === 'EUR' ? '€' : '$'}{calculateNetworkFee()}</div>
-            </div>
+            <>
+              <div style={feesOptionStyles}>
+                <div style={feesLabelStyles}>Network fee</div>
+                <div style={feesValueStyles}>{selectedCurrency === 'EUR' ? '€' : '$'}{calculateNetworkFee()}</div>
+              </div>
+              <div style={dividerStyles} />
+            </>
           )}
-          <div style={dividerStyles} />
           <div style={{
             ...feesOptionStyles,
-            marginTop: '4px'
+            marginTop: mode === 'buy' ? '4px' : '0'
           }}>
             <div style={{
               ...feesLabelStyles,
