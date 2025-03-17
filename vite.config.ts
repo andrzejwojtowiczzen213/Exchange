@@ -11,8 +11,18 @@ export default defineConfig({
     minify: 'terser',
     rollupOptions: {
       output: {
-        manualChunks: undefined
+        manualChunks: undefined,
+        inlineDynamicImports: true
       }
     }
+  },
+  resolve: {
+    alias: {
+      '@': '/src'
+    }
+  },
+  server: {
+    port: 5173,
+    strictPort: false
   }
 })
