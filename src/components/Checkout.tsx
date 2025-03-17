@@ -606,7 +606,7 @@ const Checkout: React.FC = () => {
       </div>
       <div style={walletAndPaymentContainerStyles}>
         <div style={sectionStyles}>
-          <div style={labelStyles}>Send to</div>
+          <div style={labelStyles}>{mode === 'buy' ? 'Send to' : 'Sending from'}</div>
           <div style={addressContainerStyles}>
             {selectedAsset === 'BTC' ? (
               <svg style={assetIconSmallStyles} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 57 57" fill="none">
@@ -650,7 +650,7 @@ const Checkout: React.FC = () => {
         </div>
         <div style={dividerStyles} />
         <div style={sectionStyles}>
-          <div style={labelStyles}>Pay with</div>
+          <div style={labelStyles}>{mode === 'buy' ? 'Pay with' : 'Get paid to'}</div>
           <div style={bankTransferContainerStyles}>
             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="24" viewBox="0 0 36 24" fill="none">
               <rect width="36" height="24" rx="4" fill="#DBEAFE"/>
