@@ -9,7 +9,6 @@ interface TransactionStatusItemProps {
 
 const TransactionStatusItem: React.FC<TransactionStatusItemProps> = ({
   statusText,
-  description,
   timestamp,
   isCompleted,
 }) => {
@@ -18,67 +17,48 @@ const TransactionStatusItem: React.FC<TransactionStatusItemProps> = ({
       display: 'flex',
       alignItems: 'flex-start',
       gap: '12px',
-      width: '100%',
     },
     iconContainer: {
       width: '24px',
       height: '24px',
-      borderRadius: '50%',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: isCompleted ? '#10B981' : '#E5E7EB',
-      flexShrink: 0,
+      background: isCompleted ? '#16A34A' : '#E5E7EB',
+      borderRadius: '50%',
     },
     content: {
       flex: 1,
     },
-    header: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '4px',
-    },
     statusText: {
       color: '#1E1E1E',
-      fontSize: '14px',
-      fontWeight: 400,
-      lineHeight: '20px',
       fontFamily: 'Inter, sans-serif',
-      textAlign: 'left' as const,
+      fontSize: '14px',
+      fontWeight: 500,
+      lineHeight: '20px',
+      marginBottom: '4px',
     },
     timestamp: {
       color: '#6B7280',
-      fontSize: '12px',
-      lineHeight: '16px',
       fontFamily: 'Inter, sans-serif',
-    },
-    description: {
-      color: '#6B7280',
       fontSize: '12px',
+      fontWeight: 400,
       lineHeight: '16px',
-      fontFamily: 'Inter, sans-serif',
-      textAlign: 'left' as const,
     },
   };
 
   return (
     <div style={styles.container}>
       <div style={styles.iconContainer}>
-        {isCompleted ? (
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 3L4.5 8.5L2 6" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        {isCompleted && (
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2.9165 10.3613L7.68924 15.4168L17.0832 4.5835" stroke="white" strokeWidth="1.25" strokeLinecap="square"/>
           </svg>
-        ) : (
-          <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#9CA3AF' }} />
         )}
       </div>
       <div style={styles.content}>
-        <div style={styles.header}>
-          <span style={styles.statusText}>{statusText}</span>
-          <span style={styles.timestamp}>{timestamp}</span>
-        </div>
-        <p style={styles.description}>{description}</p>
+        <div style={styles.statusText}>{statusText}</div>
+        <div style={styles.timestamp}>{timestamp}</div>
       </div>
     </div>
   );

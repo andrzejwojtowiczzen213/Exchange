@@ -29,7 +29,8 @@ const TransactionTimeline: React.FC<TransactionTimelineProps> = ({ statuses }) =
       top: '24px',
       bottom: '-24px',
       width: '2px',
-      backgroundColor: '#E5E7EB',
+      borderLeft: '2px dotted #E5E7EB',
+      backgroundColor: 'transparent',
     },
   };
 

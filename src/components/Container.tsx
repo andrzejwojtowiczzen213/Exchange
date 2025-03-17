@@ -1300,10 +1300,12 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
             <div style={feesLabelStyles}>Processing fee</div>
             <div style={feesValueStyles}>{selectedCurrency === 'EUR' ? '€' : '$'}{calculateProcessingFee()}</div>
           </div>
-          <div style={feesOptionStyles}>
-            <div style={feesLabelStyles}>Network fee</div>
-            <div style={feesValueStyles}>{selectedCurrency === 'EUR' ? '€' : '$'}{calculateNetworkFee()}</div>
-          </div>
+          {mode === 'buy' && (
+            <div style={feesOptionStyles}>
+              <div style={feesLabelStyles}>Network fee</div>
+              <div style={feesValueStyles}>{selectedCurrency === 'EUR' ? '€' : '$'}{calculateNetworkFee()}</div>
+            </div>
+          )}
           <div style={dividerStyles} />
           <div style={{
             ...feesOptionStyles,
