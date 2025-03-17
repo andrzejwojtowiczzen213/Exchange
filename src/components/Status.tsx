@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, CSSProperties } from "react";
+import React, { useState, CSSProperties, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import TransactionTimeline from './TransactionTimeline';
 
@@ -14,6 +14,15 @@ interface LocationState {
 const Status: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsDrawerOpen(true);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
   
   // Debug log for raw location state
   console.log('Raw location:', location);
@@ -121,9 +130,9 @@ const Status: React.FC = () => {
 
   const assetTextStyles = {
     display: 'flex',
+    flexDirection: 'column' as const,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: '8px',
+    gap: '4px',
     marginTop: '16px',
     fontSize: '30px',
     fontFamily: '"Satoshi Variable", system-ui, sans-serif',
@@ -131,6 +140,14 @@ const Status: React.FC = () => {
     lineHeight: '36px',
     letterSpacing: '-0.09px',
     textAlign: 'center' as const,
+  };
+
+  const fiatValueStyles = {
+    color: '#6B7280',
+    fontSize: '24px',
+    fontFamily: '"Satoshi Variable", system-ui, sans-serif',
+    fontWeight: 500,
+    lineHeight: '32px',
   };
 
   const buyingTextStyles = {
@@ -191,21 +208,73 @@ const Status: React.FC = () => {
     lineHeight: '24px',
   };
 
-  const addressContainerStyles = {
+  const addressContainerStyles: React.CSSProperties = {
     display: 'flex',
-    alignItems: 'left',
-    gap: '12px',
+    flexDirection: 'column',
+    gap: '8px',
+    marginBottom: '24px',
   };
 
-  const bankTransferContainerStyles = {
-    display: 'flex',
-    alignItems: 'left',
-    gap: '12px',
+  const addressLabelStyles: React.CSSProperties = {
+    color: '#6B7280',
+    fontSize: '14px',
+    fontWeight: 500,
   };
 
-  const assetIconSmallStyles = {
-    width: '24px',
-    height: '24px',
+  const addressValueStyles: React.CSSProperties = {
+    color: '#1E1E1E',
+    fontSize: '16px',
+    fontWeight: 500,
+    wordBreak: 'break-all' as const,
+  };
+
+  const copyButtonStyles: React.CSSProperties = {
+    background: '#F3F4F6',
+    border: 'none',
+    borderRadius: '8px',
+    padding: '8px 16px',
+    color: '#1E1E1E',
+    fontSize: '14px',
+    fontWeight: 500,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    alignSelf: 'flex-start',
+  };
+
+  const qrCodeContainerStyles: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: '24px',
+  };
+
+  const qrCodeStyles: React.CSSProperties = {
+    width: '200px',
+    height: '200px',
+    padding: '16px',
+    borderRadius: '8px',
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
+  };
+
+  const warningStyles: React.CSSProperties = {
+    backgroundColor: '#FEF3C7',
+    border: '1px solid #FCD34D',
+    borderRadius: '8px',
+    padding: '16px',
+    marginBottom: '24px',
+  };
+
+  const warningTextStyles: React.CSSProperties = {
+    color: '#92400E',
+    fontSize: '14px',
+    lineHeight: '20px',
+  };
+
+  const warningTitleStyles: React.CSSProperties = {
+    ...warningTextStyles,
+    fontWeight: 600,
+    marginBottom: '4px',
   };
 
   const pageContainerStyles: CSSProperties = {
@@ -234,21 +303,35 @@ const Status: React.FC = () => {
     {
       id: "1",
       statusText: "Transaction started",
-      description: "We're making sure all the amounts are correct.",
+      description: "",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       isCompleted: true,
     },
     {
       id: "2",
-      statusText: "Processing payment",
-      description: "Your payment is being processed by our payment provider.",
+      statusText: "Verification",
+      description: "We're verifying your transaction details.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       isCompleted: true,
     },
     {
       id: "3",
-      statusText: "Confirming transaction",
-      description: "We're waiting for final confirmation from the bank.",
+      statusText: "Waiting for your crypto transfer",
+      description: `We are waiting to receive your ${selectedAsset} transfer from your wallet (0xb794…ea0e68).`,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      isCompleted: false,
+    },
+    {
+      id: "4",
+      statusText: "Final checks",
+      description: "We're performing final checks on your transaction.",
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      isCompleted: false,
+    },
+    {
+      id: "5",
+      statusText: "Payout",
+      description: "Preparing your payout.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       isCompleted: false,
     },
@@ -268,6 +351,91 @@ const Status: React.FC = () => {
 
   const truncateAddress = (address: string) => {
     return `${address.slice(0, 8)}...${address.slice(-8)}`;
+  };
+
+  const drawerStyles: React.CSSProperties = {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: '16px',
+    borderTopRightRadius: '16px',
+    padding: '16px',
+    boxShadow: '0px 4px 24px rgba(0, 0, 0, 0.08)',
+    transition: 'transform 0.3s ease-in-out',
+    zIndex: 3,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    maxHeight: '80vh',
+    overflowY: 'auto',
+  };
+
+  const drawerHeaderStyles: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: '16px',
+  };
+
+  const drawerTitleStyles: React.CSSProperties = {
+    fontSize: '18px',
+    fontWeight: 600,
+    color: '#1E1E1E',
+    margin: 0,
+    flex: 1,
+    textAlign: 'center',
+  };
+
+  const drawerDescriptionStyles: React.CSSProperties = {
+    color: '#6B7280',
+    textAlign: 'center',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '14px',
+    fontStyle: 'normal',
+    fontWeight: 400,
+    lineHeight: '20px',
+    letterSpacing: '-0.09px',
+    marginBottom: '16px',
+  };
+
+  const closeButtonStyles: React.CSSProperties = {
+    background: 'none',
+    border: 'none',
+    padding: '8px',
+    cursor: 'pointer',
+    color: '#6B7280',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
+  const drawerContentStyles: React.CSSProperties = {
+    flex: 1,
+    overflowY: 'auto',
+    padding: '16px 0',
+  };
+
+  const overlayStyles: React.CSSProperties = {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    zIndex: 2,
+    opacity: isDrawerOpen ? 1 : 0,
+    visibility: isDrawerOpen ? 'visible' : 'hidden',
+    transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
+  };
+
+  const handleCheckClick = () => {
+    setIsDrawerOpen(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
   };
 
   return (
@@ -309,13 +477,64 @@ const Status: React.FC = () => {
             </svg>
           )}
           <div style={assetTextStyles}>
-            <span style={buyingTextStyles}>{mode === 'buy' ? 'Buying' : 'Selling'}</span>
-            <span style={valueTextStyles}>{assetValue}</span>
-            <span style={valueTextStyles}>{selectedAsset}</span>
+            <div>
+              <span style={buyingTextStyles}>{mode === 'buy' ? 'Buying' : 'Selling'}</span>
+              <span style={{ ...valueTextStyles, margin: '0 4px' }}>{assetValue}</span>
+              <span style={valueTextStyles}>{selectedAsset}</span>
+            </div>
+            <div style={fiatValueStyles}>
+              For {fiatValue} {selectedCurrency}
+            </div>
           </div>
         </div>
         <div style={timelineContainerStyles}>
-          <TransactionTimeline statuses={statuses} />
+          <TransactionTimeline statuses={statuses} onCheckClick={handleCheckClick} />
+        </div>
+
+        <div style={overlayStyles} onClick={handleCloseDrawer} />
+        <div style={{
+          ...drawerStyles,
+          transform: `translateY(${isDrawerOpen ? '0' : '100%'})`,
+        }}>
+          <div style={drawerHeaderStyles}>
+            <h2 style={drawerTitleStyles}>Send crypto to complete</h2>
+            <button style={closeButtonStyles} onClick={handleCloseDrawer}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18M6 6L18 18" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div style={drawerDescriptionStyles}>
+            To receive your funds, go to your crypto wallet app and manually send the exact amount to Ramp Network's wallet address.
+          </div>
+          <div style={drawerContentStyles}>
+            <div style={addressContainerStyles}>
+              <div style={addressLabelStyles}>Send to this address</div>
+              <div style={addressValueStyles}>
+                bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+              </div>
+              <button style={copyButtonStyles}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13.3333 6H7.33333C6.59695 6 6 6.59695 6 7.33333V13.3333C6 14.0697 6.59695 14.6667 7.33333 14.6667H13.3333C14.0697 14.6667 14.6667 14.0697 14.6667 13.3333V7.33333C14.6667 6.59695 14.0697 6 13.3333 6Z" stroke="#1E1E1E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M3.33333 10H2.66667C2.31305 10 1.97391 9.85953 1.72386 9.60948C1.47381 9.35943 1.33334 9.02029 1.33334 8.66667V2.66667C1.33334 2.31305 1.47381 1.97391 1.72386 1.72386C1.97391 1.47381 2.31305 1.33334 2.66667 1.33334H8.66667C9.02029 1.33334 9.35943 1.47381 9.60948 1.72386C9.85953 1.97391 10 2.31305 10 2.66667V3.33334" stroke="#1E1E1E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Copy address
+              </button>
+            </div>
+            <div style={addressContainerStyles}>
+              <div style={addressLabelStyles}>Ramp Network's ETH wallet address</div>
+              <div style={addressValueStyles}>
+                0x1234567890123456789012345678901234567890
+              </div>
+              <button style={copyButtonStyles}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13.3333 6H7.33333C6.59695 6 6 6.59695 6 7.33333V13.3333C6 14.0697 6.59695 14.6667 7.33333 14.6667H13.3333C14.0697 14.6667 14.6667 14.0697 14.6667 13.3333V7.33333C14.6667 6.59695 14.0697 6 13.3333 6Z" stroke="#1E1E1E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M3.33333 10H2.66667C2.31305 10 1.97391 9.85953 1.72386 9.60948C1.47381 9.35943 1.33334 9.02029 1.33334 8.66667V2.66667C1.33334 2.31305 1.47381 1.97391 1.72386 1.72386C1.97391 1.47381 2.31305 1.33334 2.66667 1.33334H8.66667C9.02029 1.33334 9.35943 1.47381 9.60948 1.72386C9.85953 1.97391 10 2.31305 10 2.66667V3.33334" stroke="#1E1E1E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Copy address
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
