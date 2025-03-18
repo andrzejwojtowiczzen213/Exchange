@@ -239,7 +239,7 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
     overflow: 'hidden',
     color: 'var(--colors-base-secondary-foreground, #1E1E1E)',
     textOverflow: 'ellipsis',
-    fontFamily: 'var(--layout-font-family-heading, "Satoshi Variable")',
+    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
     fontSize: 'var(--layout-font-size-text-medium, 16px)',
     fontStyle: 'normal',
     fontWeight: 'var(--font-weight-bold, 700)',
