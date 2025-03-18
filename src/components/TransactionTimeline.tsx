@@ -17,7 +17,7 @@ interface TransactionTimelineProps {
 const timelineStyles = {
   display: 'flex',
   flexDirection: 'column' as const,
-  gap: '24px',
+  gap: '16px',
   background: '#FFFFFF',
   borderRadius: '12px',
 };
@@ -30,11 +30,11 @@ export const TransactionTimeline: React.FC<TransactionTimelineProps> = ({ status
           {index < statuses.length - 1 && (
             <div style={{
               position: 'absolute',
-              left: '11px',
-              top: '24px',
-              bottom: '-24px',
-              width: '2px',
-              borderLeft: '2px dotted #E5E7EB',
+              left: '9px',
+              top: '20px',
+              bottom: '-20px',
+              width: '3px',
+              borderLeft: '3px dotted #E5E7EB',
               backgroundColor: 'transparent',
             }} />
           )}

@@ -15,6 +15,15 @@ const TransactionStatusItem: React.FC<TransactionStatusItemProps> = ({
   isCompleted,
   onClick,
 }) => {
+  const isActive = statusText === 'Waiting for your crypto transfer';
+  
+  const keyframesStyle = `
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  `;
+
   const styles = {
     container: {
       display: 'flex',
@@ -22,14 +31,29 @@ const TransactionStatusItem: React.FC<TransactionStatusItemProps> = ({
       gap: '12px',
     },
     iconContainer: {
-      width: '24px',
-      height: '24px',
+      width: '20px',
+      height: '20px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: isCompleted ? '#16A34A' : '#E5E7EB',
+      background: isCompleted ? '#16A34A' : '#FFFFFF',
+      border: isCompleted || isActive ? 'none' : 'none',
       borderRadius: '50%',
       cursor: isCompleted ? 'pointer' : 'default',
+      position: 'relative' as const,
+    },
+    spinnerContainer: {
+      animation: 'spin 1s linear infinite',
+      width: '20px',
+      height: '20px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'absolute' as const,
+      top: '0',
+      left: '0',
+      background: '#FFFFFF',
+      borderRadius: '50%',
     },
     content: {
       flex: 1,
@@ -38,13 +62,13 @@ const TransactionStatusItem: React.FC<TransactionStatusItemProps> = ({
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: '4px',
+      marginBottom: description ? '4px' : '0',
     },
     statusText: {
       color: '#1E1E1E',
       fontFamily: 'Inter, sans-serif',
       fontSize: '14px',
-      fontWeight: 500,
+      fontWeight: isActive ? 600 : 500,
       lineHeight: '20px',
     },
     timestamp: {
@@ -79,46 +103,54 @@ const TransactionStatusItem: React.FC<TransactionStatusItemProps> = ({
       fontWeight: 600,
       cursor: 'pointer',
       border: 'none',
+      marginTop: '12px',
+      marginBottom: '4px',
     },
+  };
+
+  const renderIcon = () => {
+    if (isCompleted) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <rect width="24" height="24" fill="white"/>
+          <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM16.0554 9.39446L14.8945 8.4446L10.4443 13.8837L8.5 11.9393L7.43934 13L10.5557 16.1163L16.0554 9.39446Z" fill="#16A34A"/>
+        </svg>
+      );
+    } else if (isActive) {
+      return (
+        <>
+          <style>{keyframesStyle}</style>
+          <div style={styles.spinnerContainer}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="none">
+              <path d="M16 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2zm0 25.6C9.404 27.6 4 22.196 4 16S9.404 4.4 16 4.4 28 9.804 28 16s-5.404 11.6-12 11.6z" fill="#E5E7EB"/>
+              <path d="M16 2v2.4c6.596 0 12 5.404 12 11.6h2C30 8.268 23.732 2 16 2z" fill="#4B5563"/>
+            </svg>
+          </div>
+        </>
+      );
+    } else {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="#E5E7EB" strokeWidth="1.5"/>
+        </svg>
+      );
+    }
   };
 
   return (
     <div style={styles.container}>
-      <div style={styles.iconContainer} onClick={onClick}>
-        {isCompleted ? (
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <rect width="24" height="24" fill="white"/>
-            <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM16.0554 9.39446L14.8945 8.4446L10.4443 13.8837L8.5 11.9393L7.43934 13L10.5557 16.1163L16.0554 9.39446Z" fill="#16A34A"/>
-          </svg>
-        ) : statusText === 'Waiting for your crypto transfer' ? (
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <g clipPath="url(#paint0_angular_440_13989_clip_path)">
-              <g transform="matrix(0 0.008 -0.008 0 8 8)">
-                <foreignObject x="-1036.78" y="-1036.78" width="2073.55" height="2073.55">
-                  <div xmlns="http://www.w3.org/1999/xhtml" style={{background: 'conic-gradient(from 90deg,rgba(75, 85, 99, 0) 0deg,rgba(75, 85, 99, 1) 360deg)', height: '100%', width: '100%', opacity: 1}}></div>
-                </foreignObject>
-              </g>
-            </g>
-            <path fillRule="evenodd" clipRule="evenodd" d="M8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16ZM8.11142 13.7893C11.2233 13.7893 13.7459 11.2666 13.7459 8.15477C13.7459 5.04291 11.2233 2.52025 8.11142 2.52025C4.99956 2.52025 2.47691 5.04291 2.47691 8.15477C2.47691 11.2666 4.99956 13.7893 8.11142 13.7893Z"/>
-            <defs>
-              <clipPath id="paint0_angular_440_13989_clip_path">
-                <path fillRule="evenodd" clipRule="evenodd" d="M8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16ZM8.11142 13.7893C11.2233 13.7893 13.7459 11.2666 13.7459 8.15477C13.7459 5.04291 11.2233 2.52025 8.11142 2.52025C4.99956 2.52025 2.47691 5.04291 2.47691 8.15477C2.47691 11.2666 4.99956 13.7893 8.11142 13.7893Z"/>
-              </clipPath>
-            </defs>
-          </svg>
-        ) : (statusText === 'Final checks' || statusText === 'Payout') ? (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none">
-            <circle cx="10" cy="10.3594" r="9.25" stroke="#E5E7EB" strokeWidth="1.5" strokeLinecap="square"/>
-          </svg>
-        ) : null}
+      <div style={styles.iconContainer}>
+        {renderIcon()}
       </div>
       <div style={styles.content}>
         <div style={styles.headerRow}>
           <div style={styles.statusText}>{statusText}</div>
           <div style={styles.timestamp}>{timestamp}</div>
         </div>
-        {description && <div style={styles.description}>{description}</div>}
-        {statusText === 'Waiting for your crypto transfer' && (
+        {description && !['Verification', 'Final checks', 'Payout'].includes(statusText) && (
+          <div style={styles.description}>{description}</div>
+        )}
+        {isActive && (
           <button style={styles.button} onClick={onClick}>
             Send crypto to complete
           </button>
